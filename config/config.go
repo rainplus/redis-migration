@@ -9,6 +9,7 @@ import (
 type Configuration struct {
 	OldRedis          Redis `yaml:"old_redis"`
 	ConcurrentWorkers int   `yaml:"concurrent_workers"`
+	FilterRegex  	  string `yaml:"regex"`
 	NewRedis          Redis `yaml:"new_redis"`
 	Databases         []int `yaml:"migration_databases"`
 }

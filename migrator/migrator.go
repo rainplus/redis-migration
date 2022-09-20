@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"redis-migrator/client"
 	"redis-migrator/config"
+	"regexp"
 )
 
 // MigrateRedisData is the function to migrate keys from old to new redis
@@ -23,7 +24,13 @@ func MigrateRedisData(redConfig config.Configuration) {
 		if err != nil {
 			logrus.Errorf("Error while listing redis keys %v", err)
 		}
+		r, _ := regexp.Compile(redConfig.FilterRegex)
+		logrus.Debugf("正则:%s",redConfig.FilterRegex)
 		for _, key := range keys {
+			if !(r.MatchString(key)) {
+				continue
+			}
+			logrus.Debugf("同步:%s",key)	
 			keyType, err := redis.String(oldRedisClient.Do("TYPE", key))
 			if err != nil {
 				logrus.Errorf("Not able to get the key type %s: %v", key, err)
